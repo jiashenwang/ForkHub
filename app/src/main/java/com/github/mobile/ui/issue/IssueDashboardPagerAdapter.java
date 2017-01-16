@@ -28,7 +28,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.github.mobile.R;
 import com.github.mobile.accounts.AccountUtils;
-import com.github.mobile.ui.FragmentStatePagerAdapter;
+import com.github.mobile.ui.FragmentPagerAdapter;
+//import com.github.mobile.ui.FragmentStatePagerAdapter;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -37,7 +38,7 @@ import java.util.Map;
 /**
  * Pager adapter for the issues dashboard
  */
-public class IssueDashboardPagerAdapter extends FragmentStatePagerAdapter {
+public class IssueDashboardPagerAdapter extends FragmentPagerAdapter {
 
     private final Resources resources;
 

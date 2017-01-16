@@ -27,7 +27,8 @@ import android.util.SparseArray;
 import android.view.ViewGroup;
 
 import com.github.mobile.core.issue.IssueStore;
-import com.github.mobile.ui.FragmentStatePagerAdapter;
+import com.github.mobile.ui.FragmentPagerAdapter;
+//import com.github.mobile.ui.FragmentStatePagerAdapter;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ import org.eclipse.egit.github.core.User;
 /**
  * Adapter to page through an {@link Issue} array
  */
-public class IssuesPagerAdapter extends FragmentStatePagerAdapter {
+public class IssuesPagerAdapter extends FragmentPagerAdapter {
 
     private final Repository repo;
 

@@ -21,14 +21,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.github.mobile.ui.FragmentStatePagerAdapter;
+import com.github.mobile.ui.FragmentPagerAdapter;
+//import com.github.mobile.ui.FragmentStatePagerAdapter;
 
 import org.eclipse.egit.github.core.Repository;
 
 /**
  * Pager over commits
  */
-public class CommitPagerAdapter extends FragmentStatePagerAdapter {
+public class CommitPagerAdapter extends FragmentPagerAdapter {
 
     private final Repository repository;
 

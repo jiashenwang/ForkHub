@@ -20,12 +20,13 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
-import com.github.mobile.ui.FragmentStatePagerAdapter;
+import com.github.mobile.ui.FragmentPagerAdapter;
+//import com.github.mobile.ui.FragmentStatePagerAdapter;
 
 /**
  * Adapter to page through an array of Gists
  */
-public class GistsPagerAdapter extends FragmentStatePagerAdapter {
+public class GistsPagerAdapter extends FragmentPagerAdapter {
 
     private final String[] ids;
 
