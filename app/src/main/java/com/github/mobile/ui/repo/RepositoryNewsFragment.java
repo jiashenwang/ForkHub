@@ -83,8 +83,7 @@ public class RepositoryNewsFragment extends NewsFragment {
     }
 
     @Override
-    protected void viewUser(UserPair users) {
-        if (!viewUser(users.from))
-            viewUser(users.to);
+    protected void viewUser(UserPair users) {   // Changes (M)
+        super.viewUser(users);
     }
 }

@@ -89,8 +89,7 @@ public abstract class UserNewsFragment extends NewsFragment implements
     }
 
     @Override
-    protected void viewUser(UserPair users) {
-        if (!viewUser(users.from))
-            viewUser(users.to);
+    protected void viewUser(UserPair users) {    // Changed (M)
+        super.viewUser(users);
     }
 }

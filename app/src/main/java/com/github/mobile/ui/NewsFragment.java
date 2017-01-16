@@ -256,7 +256,9 @@ public abstract class NewsFragment extends PagedItemFragment<Event> {
      *
      * @param users
      */
-    protected void viewUser(UserPair users) {
+    protected void viewUser(UserPair users) {   // Changed (M)
+        if (!viewUser(users.from))
+            viewUser(users.to);
     }
 
     /**
