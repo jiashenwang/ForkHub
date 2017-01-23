@@ -22,6 +22,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.Module;
 import com.google.inject.OutOfScopeException;
+import com.google.inject.Provider;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -30,10 +31,49 @@ import java.util.concurrent.ConcurrentHashMap;
  * Custom scope that makes an authenticated GitHub account available by
  * enforcing that the user is logged in before proceeding.
  */
-public class AccountScope extends ScopeBase {
+public class AccountScope implements ScopeBase {
 
     private static final Key<GitHubAccount> GITHUB_ACCOUNT_KEY = Key
             .get(GitHubAccount.class);
+
+
+    //Added  -------------------------------
+
+    private static final Provider<Object> SEEDED_KEY_PROVIDER = new Provider<Object>() {
+        public Object get() {
+            throw new IllegalStateException("Object not seeded in this scope");
+        }
+    };
+
+    /**
+     * Returns a provider that always throws an exception complaining that the
+     * object in question must be seeded before it can be injected.
+     *
+     * @return typed provider
+     */
+    @SuppressWarnings({ "unchecked" })
+    public static <T> Provider<T> seededKeyProvider() {
+        return (Provider<T>) SEEDED_KEY_PROVIDER;
+    }
+
+    public <T> Provider<T> scope(final Key<T> key, final Provider<T> unscoped) {
+        return new Provider<T>() {
+            public T get() {
+                Map<Key<?>, Object> scopedObjects = getScopedObjectMap(key);
+
+                @SuppressWarnings("unchecked")
+                T current = (T) scopedObjects.get(key);
+                if (current == null && !scopedObjects.containsKey(key)) {
+                    current = unscoped.get();
+                    scopedObjects.put(key, current);
+                }
+                return current;
+            }
+        };
+    }
+
+
+    // Added ----------------------------------
 
     /**
      * Create new module
@@ -93,7 +133,7 @@ public class AccountScope extends ScopeBase {
     }
 
     @Override
-    protected <T> Map<Key<?>, Object> getScopedObjectMap(final Key<T> key) {
+    public <T> Map<Key<?>, Object> getScopedObjectMap(final Key<T> key) {
         GitHubAccount account = currentAccount.get();
         if (account == null)
             throw new OutOfScopeException("Cannot access " + key
