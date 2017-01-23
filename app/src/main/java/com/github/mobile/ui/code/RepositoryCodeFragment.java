@@ -314,10 +314,10 @@ public class RepositoryCodeFragment extends DialogFragment implements
         if (tree == null || entry == null)
             return;
 
-        if (entry instanceof Folder)
+        if (entry.isFolder())
             setFolder(tree, (Folder) entry);
         else
             startActivity(BranchFileViewActivity.createIntent(repository,
-                    tree.branch, entry.entry.getPath(), entry.entry.getSha()));
+                    tree.branch, entry.getPath(), entry.getSha()));
     }
 }

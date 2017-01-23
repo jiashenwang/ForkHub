@@ -157,8 +157,8 @@ public class CodeTreeAdapter extends MultiTypeAdapter {
         switch (type) {
         case TYPE_BLOB:
             Entry file = (Entry) item;
-            setText(0, file.name);
-            setText(1, Formatter.formatFileSize(context, file.entry.getSize()));
+            setText(0, file.getName());
+            setText(1, Formatter.formatFileSize(context, file.getEntry().getSize()));
 
             break;
         case TYPE_TREE:
