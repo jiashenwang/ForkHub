@@ -182,45 +182,47 @@ public class AccountUtils {
         return accessible.toArray(new Account[accessible.size()]);
     }
 
-    /**
-     * Get account used for authentication
-     *
-     * @param manager
-     * @param activity
-     * @return account
-     * @throws IOException
-     * @throws AccountsException
-     */
-    public static Account getAccount(final AccountManager manager,
-            final Activity activity) throws IOException, AccountsException {
-        final boolean loggable = Log.isLoggable(TAG, DEBUG);
-        if (loggable)
-            Log.d(TAG, "Getting account");
+    static public boolean isLoggable() {
+        return Log.isLoggable(TAG, DEBUG);
+    }
 
+    static public void printLog(String log) {
+        Log.d(TAG, log);
+    }
+
+    static void accountPreconditionCheck(final AccountManager manager,
+                             final Activity activity) throws IOException, AccountsException {
+        // require: manager exists
+        // ensure: throw exception if activity doesnt exists, aoperation is canceled, or manager
+        //         has not been Authenticated
         if (activity == null)
             throw new IllegalArgumentException("Activity cannot be null");
-
         if (activity.isFinishing())
             throw new OperationCanceledException();
+        if (!hasAuthenticator(manager))
+            throw new AuthenticatorConflictException();
+    }
 
+    public static boolean isAccountsEmpty(final AccountManager manager, final Activity activity)
+            throws OperationCanceledException, AuthenticatorException, IOException {
+        // require: activity exists and manager has been Authenticated
+        // ensure: return true if accounts are empty and false otherwise
+        Log.d(TAG, "No GitHub accounts for activity=" + activity);
+        return getAccounts(manager).length == 0;
+    }
+
+    public static void setAccount(final AccountManager manager,
+                                     final Activity activity) throws IOException, AccountsException {
+        // require: accounts array is empty
+        // ensure: accounts array has one element
         Account[] accounts;
         try {
-            if (!hasAuthenticator(manager))
-                throw new AuthenticatorConflictException();
-
-            while ((accounts = getAccounts(manager)).length == 0) {
-                if (loggable)
-                    Log.d(TAG, "No GitHub accounts for activity=" + activity);
-
-                Bundle result = manager.addAccount(ACCOUNT_TYPE, null, null,
-                        null, activity, null, null).getResult();
-
-                if (loggable)
-                    Log.d(TAG,
-                            "Added account "
-                                    + result.getString(KEY_ACCOUNT_NAME));
-            }
-        } catch (OperationCanceledException e) {
+            Bundle result = manager.addAccount(ACCOUNT_TYPE, null, null,
+                    null, activity, null, null).getResult();
+            Log.d(TAG,
+                    "Added account "
+                            + result.getString(KEY_ACCOUNT_NAME));
+        }catch (OperationCanceledException e) {
             Log.d(TAG, "Excepting retrieving account", e);
             activity.finish();
             throw e;
@@ -239,11 +241,22 @@ public class AccountUtils {
             Log.d(TAG, "Excepting retrieving account", e);
             throw e;
         }
-
-        if (loggable)
-            Log.d(TAG, "Returning account " + accounts[0].name);
-
-        return accounts[0];
+    }
+    /**
+     * Get account used for authentication
+     *
+     * @param manager
+     * @param activity
+     * @return account
+     * @throws IOException
+     * @throws AccountsException
+     */
+    public static Account getAccount(final AccountManager manager,
+            final Activity activity) throws IOException, AccountsException {
+        // require: getAccounts(manager) never returns empty array
+        // ensure: return an account
+        Log.d(TAG, "Getting account");
+        return getAccounts(manager)[0];
     }
 
     /**

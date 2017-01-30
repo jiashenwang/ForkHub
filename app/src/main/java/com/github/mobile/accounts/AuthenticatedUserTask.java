@@ -70,6 +70,12 @@ public abstract class AuthenticatedUserTask<ResultT> extends
     @Override
     public final ResultT call() throws Exception {
         final AccountManager manager = AccountManager.get(activity);
+
+        AccountUtils.accountPreconditionCheck(manager, activity);
+        if(AccountUtils.isAccountsEmpty(manager, activity)) {
+            AccountUtils.setAccount(manager, activity);
+        }
+
         final Account account = AccountUtils.getAccount(manager, activity);
 
         accountScope.enterWith(account, manager);
