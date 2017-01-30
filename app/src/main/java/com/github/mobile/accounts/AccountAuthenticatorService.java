@@ -29,13 +29,17 @@ public class AccountAuthenticatorService extends Service {
     private static AccountAuthenticator AUTHENTICATOR;
 
     public IBinder onBind(Intent intent) {
-        return intent.getAction().equals(ACTION_AUTHENTICATOR_INTENT) ? getAuthenticator()
+        if(AUTHENTICATOR == null) {
+            setAuthenticator();
+        }
+
+        return intent.getAction().equals(ACTION_AUTHENTICATOR_INTENT) ? AUTHENTICATOR
                 .getIBinder() : null;
     }
 
-    private AccountAuthenticator getAuthenticator() {
-        if (AUTHENTICATOR == null)
-            AUTHENTICATOR = new AccountAuthenticator(this);
-        return AUTHENTICATOR;
+    private void setAuthenticator() {
+        // require: AUTHENTICATOR is null
+        // ensure: AUTHENTICATOR = new AccountAuthenticator(this);
+        AUTHENTICATOR = new AccountAuthenticator(this);
     }
 }
