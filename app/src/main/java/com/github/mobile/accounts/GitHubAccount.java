@@ -29,7 +29,7 @@ import java.io.IOException;
 /**
  * GitHub account model
  */
-public class GitHubAccount {
+public class GitHubAccount implements com.github.mobile.accounts.Account {
 
     private static final String TAG = "GitHubAccount";
 
