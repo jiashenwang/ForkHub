@@ -18,15 +18,24 @@ package com.github.mobile.ui.repo;
 import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.github.mobile.RequestReader;
 import com.github.mobile.RequestWriter;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.User;
@@ -68,11 +77,24 @@ public class RecentRepositories implements Comparator<Repository>, Serializable 
     }
 
     private void load() {
-        LinkedHashSet<Long> loaded = new RequestReader(file, VERSION).read();
-        if (loaded == null)
-            loaded = new LinkedHashSet<Long>();
-        ids = loaded;
-        trim();
+        RandomAccessFile dir;
+        ObjectInputStream input;
+
+        try {
+            dir = new RandomAccessFile(file, "rw");
+            FileInputStream inputStream = new FileInputStream(dir.getFD());
+            GZIPInputStream gZipInput = new GZIPInputStream(inputStream, 8192 * 8);
+            input =new ObjectInputStream(gZipInput);
+            LinkedHashSet<Long> loaded = new RequestReader(file, VERSION, dir, input).read();
+            if (loaded == null)
+                loaded = new LinkedHashSet<Long>();
+            ids = loaded;
+            trim();
+        }
+        catch(IOException e){
+            Log.d( "Exception writing cache " + file.getName(), e.toString());
+        }
+
     }
 
     private void trim() {
@@ -156,8 +178,20 @@ public class RecentRepositories implements Comparator<Repository>, Serializable 
      */
     public RecentRepositories save() {
         final LinkedHashSet<Long> save = ids;
-        if (save != null)
-            new RequestWriter(file, VERSION).write(save);
+        RandomAccessFile dir;
+        ObjectOutputStream output;
+
+        try {
+            dir = new RandomAccessFile(file, "rw");
+            output = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(dir.getFD()), 8192));
+
+            if (save != null)
+                new RequestWriter(file, VERSION, dir, output).write(save);
+
+        }
+        catch(IOException e){
+            Log.d("Exception writing cache " + file.getName(), e.toString());
+        }
         return this;
     }
 

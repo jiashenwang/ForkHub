@@ -32,7 +32,12 @@ import com.google.inject.Inject;
 import com.google.inject.name.Named;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.RandomAccessFile;
 import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -40,6 +45,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import org.eclipse.egit.github.core.Repository;
 import org.eclipse.egit.github.core.User;
@@ -92,12 +99,29 @@ public class AccountDataManager {
     private <V> V read(final File file) {
         long start = System.currentTimeMillis();
         long length = file.length();
-        Object data = new RequestReader(file, FORMAT_VERSION).read();
-        if (data != null)
-            Log.d(TAG, MessageFormat.format(
-                    "Cache hit to {0}, {1} ms to load {2} bytes",
-                    file.getName(), (System.currentTimeMillis() - start),
-                    length));
+        RandomAccessFile dir;
+        ObjectInputStream input;
+        Object data = null;
+
+        try{
+            dir = new RandomAccessFile(file, "rw");
+            FileInputStream inputStream = new FileInputStream(dir.getFD());
+            GZIPInputStream gZipInput = new GZIPInputStream(inputStream, 8192 * 8);
+            input = new ObjectInputStream(gZipInput);
+
+
+            data = new RequestReader(file, FORMAT_VERSION, dir, input).read();
+            if (data != null)
+                Log.d(TAG, MessageFormat.format(
+                        "Cache hit to {0}, {1} ms to load {2} bytes",
+                        file.getName(), (System.currentTimeMillis() - start),
+                        length));
+
+        }
+        catch(IOException e){
+            Log.d(TAG, "Exception writing cache " + file.getName(), e);
+        }
+
         return (V) data;
     }
 
@@ -109,7 +133,20 @@ public class AccountDataManager {
      * @return this manager
      */
     private AccountDataManager write(File file, Object data) {
-        new RequestWriter(file, FORMAT_VERSION).write(data);
+        RandomAccessFile dir;
+        ObjectOutputStream output;
+
+        try {
+            dir = new RandomAccessFile(file,"rw");
+            output = new ObjectOutputStream(new GZIPOutputStream(new FileOutputStream(dir.getFD()), 8192));
+            new RequestWriter(file, FORMAT_VERSION, dir, output).write(data);
+        }
+        catch(IOException e){
+            Log.d(TAG, "Exception writing cache " + file.getName(), e);
+        }
+
+
+
         return this;
     }
 
