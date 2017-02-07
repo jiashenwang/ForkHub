@@ -32,6 +32,7 @@ import com.github.mobile.core.issue.IssueFilter;
 import com.github.mobile.persistence.AccountDataManager;
 import com.github.mobile.ui.ConfirmDialogFragment;
 import com.github.mobile.ui.DialogFragmentActivity;
+import com.github.mobile.ui.DialogResultListener;
 import com.github.mobile.ui.user.HomeActivity;
 import com.google.inject.Inject;
 
@@ -39,7 +40,7 @@ import com.google.inject.Inject;
  * Activity to display a list of saved {@link IssueFilter} objects
  */
 public class FiltersViewActivity extends DialogFragmentActivity implements
-        OnItemLongClickListener {
+        OnItemLongClickListener, DialogResultListener {
 
     /**
      * Create intent to browse issue filters
@@ -89,8 +90,6 @@ public class FiltersViewActivity extends DialogFragmentActivity implements
             });
             return;
         }
-
-        super.onDialogResult(requestCode, resultCode, arguments);
     }
 
     @Override

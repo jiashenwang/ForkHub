@@ -34,6 +34,7 @@ import com.github.mobile.Intents.Builder;
 import com.github.mobile.R;
 import com.github.mobile.core.issue.IssueFilter;
 import com.github.mobile.ui.DialogFragmentActivity;
+import com.github.mobile.ui.DialogResultListener;
 import com.github.mobile.util.AvatarLoader;
 import com.google.inject.Inject;
 
@@ -50,7 +51,8 @@ import org.eclipse.egit.github.core.service.MilestoneService;
 /**
  * Activity to create or edit an issues filter for a repository
  */
-public class EditIssuesFilterActivity extends DialogFragmentActivity {
+public class EditIssuesFilterActivity extends DialogFragmentActivity
+        implements DialogResultListener {
 
     /**
      * Create intent for creating an issue filter for the given repository

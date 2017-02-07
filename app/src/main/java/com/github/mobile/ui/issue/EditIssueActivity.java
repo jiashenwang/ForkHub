@@ -52,6 +52,7 @@ import com.github.mobile.core.issue.EditIssueTask;
 import com.github.mobile.core.issue.GetIssueTemplateTask;
 import com.github.mobile.core.issue.IssueUtils;
 import com.github.mobile.ui.DialogFragmentActivity;
+import com.github.mobile.ui.DialogResultListener;
 import com.github.mobile.ui.StyledText;
 import com.github.mobile.ui.TextWatcherAdapter;
 import com.github.mobile.ui.repo.RepositoryViewActivity;
@@ -75,7 +76,7 @@ import org.eclipse.egit.github.core.service.MilestoneService;
 /**
  * Activity to edit or create an issue
  */
-public class EditIssueActivity extends DialogFragmentActivity {
+public class EditIssueActivity extends DialogFragmentActivity implements DialogResultListener {
 
     /**
      * Create intent to create an issue

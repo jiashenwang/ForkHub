@@ -25,8 +25,7 @@ import java.io.Serializable;
 /**
  * Activity that display dialogs
  */
-public abstract class DialogFragmentActivity extends
-    RoboActionBarActivity implements DialogResultListener {
+public abstract class DialogFragmentActivity extends RoboActionBarActivity {
 
     /**
      * Finder bound to this activity's view
@@ -109,10 +108,5 @@ public abstract class DialogFragmentActivity extends
      */
     protected CharSequence[] getCharSequenceArrayExtra(final String name) {
         return getIntent().getCharSequenceArrayExtra(name);
-    }
-
-    @Override
-    public void onDialogResult(int requestCode, int resultCode, Bundle arguments) {
-        // Intentionally left blank
     }
 }
