@@ -18,7 +18,6 @@ package com.github.mobile;
 import android.util.Log;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -29,7 +28,7 @@ import java.util.zip.GZIPOutputStream;
 /**
  * Request writer
  */
-public class RequestWriter implements Writer{
+public class RequestWriter {
 
     private static final String TAG = "RequestWriter";
 
@@ -37,24 +36,15 @@ public class RequestWriter implements Writer{
 
     private final int version;
 
-    private RandomAccessFile dir = null;
-
-    private ObjectOutputStream output = null;
-
     /**
      * Create a request writer that writes to the given file
      *
      * @param file
      * @param formatVersion
      */
-    public RequestWriter(File file, int formatVersion, RandomAccessFile access, ObjectOutputStream stream) {
+    public RequestWriter(File file, int formatVersion) {
         handle = file;
         version = formatVersion;
-
-        createDirectory(handle.getParentFile());
-        dir = access;
-        output = stream;
-
     }
 
     private void createDirectory(final File dir) {
@@ -69,9 +59,15 @@ public class RequestWriter implements Writer{
      * @return request
      */
     public <V> V write(V request) {
+        RandomAccessFile dir = null;
         FileLock lock = null;
+        ObjectOutputStream output = null;
         try {
+            createDirectory(handle.getParentFile());
+            dir = new RandomAccessFile(handle, "rw");
             lock = dir.getChannel().lock();
+            output = new ObjectOutputStream(new GZIPOutputStream(
+                    new FileOutputStream(dir.getFD()), 8192));
             output.writeInt(version);
             output.writeObject(request);
         } catch (IOException e) {
@@ -99,16 +95,4 @@ public class RequestWriter implements Writer{
         }
         return request;
     }
-
-  /*  public void setAccess(RandomAccessFile access){
-
-        dir = access;
-
-    }
-
-    public void setOutput(ObjectOutputStream stream){
-
-        output = stream;
-
-    }*/
 }
