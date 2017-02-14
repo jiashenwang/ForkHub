@@ -27,6 +27,7 @@ import com.github.mobile.R;
 import com.github.mobile.api.model.Issue;
 import com.github.mobile.api.model.TimelineEvent;
 import com.github.mobile.api.model.User;
+import com.github.mobile.ui.listeners.EventListViewClickListener;
 import com.github.mobile.ui.user.UserViewActivity;
 import com.github.mobile.util.AvatarLoader;
 import com.github.mobile.util.HttpImageGetter;
@@ -258,20 +259,12 @@ public class EventListAdapter extends MultiTypeAdapter {
         if (canEdit) {
             // Edit button
             setGone(5, false);
-            view(5).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    issueFragment.editComment(comment.getOldCommentModel());
-                }
-            });
+            view(5).setOnClickListener(new EventListViewClickListener(context,
+                    comment, issueFragment, "edit"));
             // Delete button
             setGone(6, false);
-            view(6).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    issueFragment.deleteComment(comment.getOldCommentModel());
-                }
-            });
+            view(6).setOnClickListener(new EventListViewClickListener(context,
+                    comment, issueFragment, "delete"));
         } else {
             setGone(5, true);
             setGone(6, true);
