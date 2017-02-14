@@ -36,15 +36,21 @@ public class RequestReader {
 
     private final int version;
 
+    private RandomAccessFile dir = null;
+    private ObjectInputStream input = null;
+
     /**
      * Create request reader
-     *
-     * @param file
+     *  @param file
      * @param formatVersion
+     * @param access
+     * @param stream
      */
-    public RequestReader(File file, int formatVersion) {
+    public RequestReader(File file, int formatVersion, RandomAccessFile access, ObjectInputStream stream) {
         handle = file;
         version = formatVersion;
+        dir = access;
+        input = stream;
     }
 
     /**
@@ -57,15 +63,13 @@ public class RequestReader {
         if (!handle.exists() || handle.length() == 0)
             return null;
 
-        RandomAccessFile dir = null;
         FileLock lock = null;
-        ObjectInputStream input = null;
+
         boolean delete = false;
         try {
-            dir = new RandomAccessFile(handle, "rw");
+
             lock = dir.getChannel().lock();
-            input = new ObjectInputStream(new GZIPInputStream(
-                    new FileInputStream(dir.getFD()), 8192 * 8));
+
             int streamVersion = input.readInt();
             if (streamVersion != version) {
                 delete = true;

@@ -36,15 +36,22 @@ public class RequestWriter {
 
     private final int version;
 
+    private RandomAccessFile dir = null;
+
+    private ObjectOutputStream output = null;
+
     /**
      * Create a request writer that writes to the given file
-     *
-     * @param file
+     *  @param file
      * @param formatVersion
+     * @param access
+     * @param stream
      */
-    public RequestWriter(File file, int formatVersion) {
+    public RequestWriter(File file, int formatVersion, RandomAccessFile access, ObjectOutputStream stream) {
         handle = file;
         version = formatVersion;
+        dir = access;
+        output = stream;
     }
 
     private void createDirectory(final File dir) {
@@ -59,17 +66,15 @@ public class RequestWriter {
      * @return request
      */
     public <V> V write(V request) {
-        RandomAccessFile dir = null;
         FileLock lock = null;
-        ObjectOutputStream output = null;
         try {
             createDirectory(handle.getParentFile());
-            dir = new RandomAccessFile(handle, "rw");
+
             lock = dir.getChannel().lock();
-            output = new ObjectOutputStream(new GZIPOutputStream(
-                    new FileOutputStream(dir.getFD()), 8192));
+
             output.writeInt(version);
             output.writeObject(request);
+
         } catch (IOException e) {
             Log.d(TAG, "Exception writing cache " + handle.getName(), e);
             return null;

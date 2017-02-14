@@ -19,8 +19,11 @@ import static java.lang.String.CASE_INSENSITIVE_ORDER;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.github.mobile.RequestReader;
-import com.github.mobile.RequestWriter;
+import com.github.mobile.Reader;
+import com.github.mobile.ReaderFactory;
+
+import com.github.mobile.Writer;
+import com.github.mobile.WriterFactory;
 
 import java.io.File;
 import java.io.Serializable;
@@ -68,11 +71,15 @@ public class RecentRepositories implements Comparator<Repository>, Serializable 
     }
 
     private void load() {
-        LinkedHashSet<Long> loaded = new RequestReader(file, VERSION).read();
-        if (loaded == null)
-            loaded = new LinkedHashSet<Long>();
-        ids = loaded;
-        trim();
+
+
+            Reader requestReader = ReaderFactory.getReader("RequestReader", file);
+            LinkedHashSet<Long> loaded = requestReader.read();
+
+            if (loaded == null)
+                loaded = new LinkedHashSet<Long>();
+            ids = loaded;
+            trim();
     }
 
     private void trim() {
@@ -156,8 +163,11 @@ public class RecentRepositories implements Comparator<Repository>, Serializable 
      */
     public RecentRepositories save() {
         final LinkedHashSet<Long> save = ids;
-        if (save != null)
-            new RequestWriter(file, VERSION).write(save);
+
+            if (save != null) {
+                Writer requestWriter = WriterFactory.getWriter("Request Writer", file);
+                requestWriter.write(save);
+            }
         return this;
     }
 
