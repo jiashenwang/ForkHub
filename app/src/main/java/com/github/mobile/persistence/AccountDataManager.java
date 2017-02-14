@@ -22,9 +22,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
+import com.github.mobile.Reader;
+import com.github.mobile.ReaderFactory;
 import com.github.mobile.RequestFuture;
 import com.github.mobile.RequestReader;
-import com.github.mobile.RequestWriter;
+import com.github.mobile.Writer;
+import com.github.mobile.WriterFactory;
 import com.github.mobile.accounts.AuthenticatedUserTask;
 import com.github.mobile.core.issue.IssueFilter;
 import com.github.mobile.persistence.OrganizationRepositories.Factory;
@@ -92,12 +95,19 @@ public class AccountDataManager {
     private <V> V read(final File file) {
         long start = System.currentTimeMillis();
         long length = file.length();
-        Object data = new RequestReader(file, FORMAT_VERSION).read();
-        if (data != null)
-            Log.d(TAG, MessageFormat.format(
-                    "Cache hit to {0}, {1} ms to load {2} bytes",
-                    file.getName(), (System.currentTimeMillis() - start),
-                    length));
+        Object data = null;
+
+
+            Reader requestReader = ReaderFactory.getReader("RequestReader", file);
+            requestReader.read();
+
+            if (data != null)
+                Log.d(TAG, MessageFormat.format(
+                        "Cache hit to {0}, {1} ms to load {2} bytes",
+                        file.getName(), (System.currentTimeMillis() - start),
+                        length));
+
+
         return (V) data;
     }
 
@@ -109,7 +119,11 @@ public class AccountDataManager {
      * @return this manager
      */
     private AccountDataManager write(File file, Object data) {
-        new RequestWriter(file, FORMAT_VERSION).write(data);
+
+
+        Writer requestWriter = WriterFactory.getWriter("Request Writer",file);
+        requestWriter.write(data);
+
         return this;
     }
 
