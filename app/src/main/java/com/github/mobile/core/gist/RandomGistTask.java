@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.core.gist.GistStore;
 import com.github.mobile.ui.ProgressDialogTask;
 import com.github.mobile.ui.gist.GistsViewActivity;
@@ -95,11 +96,9 @@ public class RandomGistTask extends ProgressDialogTask<Gist> {
                 GistsViewActivity.createIntent(gist), GIST_VIEW);
     }
 
+    @ShowError(logMsg="Exception opening random Gist")
     @Override
     protected void onException(Exception e) throws RuntimeException {
         super.onException(e);
-
-        Log.d(TAG, "Exception opening random Gist", e);
-        ToastUtils.show((Activity) getContext(), e.getMessage());
     }
 }

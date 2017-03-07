@@ -20,6 +20,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.ui.ProgressDialogTask;
 import com.github.mobile.util.ToastUtils;
 import com.google.inject.Inject;
@@ -81,12 +82,10 @@ public class CreateGistTask extends ProgressDialogTask<Gist> {
         return service.createGist(gist);
     }
 
+    @ShowError(logMsg="Exception creating Gist")
     @Override
     protected void onException(Exception e) throws RuntimeException {
         super.onException(e);
-
-        Log.d(TAG, "Exception creating Gist", e);
-        ToastUtils.show((Activity) getContext(), e.getMessage());
     }
 
     /**

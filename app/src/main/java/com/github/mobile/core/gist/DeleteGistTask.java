@@ -21,6 +21,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.ui.ProgressDialogTask;
 import com.github.mobile.util.ToastUtils;
 import com.google.inject.Inject;
@@ -78,11 +79,9 @@ public class DeleteGistTask extends ProgressDialogTask<Gist> {
         activity.finish();
     }
 
+    @ShowError(logMsg="Exception deleting Gist")
     @Override
     protected void onException(Exception e) throws RuntimeException {
         super.onException(e);
-
-        Log.d(TAG, "Exception deleting Gist", e);
-        ToastUtils.show((Activity) getContext(), e.getMessage());
     }
 }

@@ -28,6 +28,7 @@ import com.google.inject.Inject;
 import org.eclipse.egit.github.core.Comment;
 import org.eclipse.egit.github.core.Gist;
 import org.eclipse.egit.github.core.service.GistService;
+import com.github.mobile.apectj.ShowError;
 
 /**
  * Task to comment on a {@link Gist}
@@ -76,12 +77,9 @@ public class CreateCommentTask extends ProgressDialogTask<Comment> {
         return created;
     }
 
+    @ShowError(logMsg="Exception creating comment on gist")
     @Override
     protected void onException(Exception e) throws RuntimeException {
         super.onException(e);
-
-        Log.d(TAG, "Exception creating comment on gist", e);
-
-        ToastUtils.show((Activity) getContext(), e.getMessage());
     }
 }

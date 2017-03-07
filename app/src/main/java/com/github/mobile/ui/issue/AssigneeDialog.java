@@ -20,6 +20,7 @@ import android.accounts.Account;
 import android.util.Log;
 
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.ui.DialogFragmentActivity;
 import com.github.mobile.ui.ProgressDialogTask;
 import com.github.mobile.util.ToastUtils;
@@ -88,12 +89,10 @@ public class AssigneeDialog {
                 show(selectedAssignee);
             }
 
+            @ShowError(logMsg="Exception loading collaborators")
             @Override
             protected void onException(Exception e) throws RuntimeException {
                 super.onException(e);
-
-                Log.d(TAG, "Exception loading collaborators", e);
-                ToastUtils.show(activity, e, R.string.error_collaborators_load);
             }
 
             @Override
