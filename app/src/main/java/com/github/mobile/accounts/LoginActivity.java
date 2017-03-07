@@ -36,7 +36,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.AlertDialog;
 import android.content.ContentResolver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -64,12 +63,10 @@ import android.widget.TextView.OnEditorActionListener;
 
 import com.github.kevinsawicki.wishlist.ViewFinder;
 import com.github.mobile.R;
-import com.github.mobile.persistence.AccountDataManager;
 import com.github.mobile.ui.LightProgressDialog;
 import com.github.mobile.ui.TextWatcherAdapter;
 import com.github.mobile.ui.roboactivities.RoboActionBarAccountAuthenticatorActivity;
 import com.github.mobile.util.ToastUtils;
-import com.google.inject.Inject;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -81,6 +78,8 @@ import org.eclipse.egit.github.core.service.OAuthService;
 import org.eclipse.egit.github.core.service.UserService;
 
 import roboguice.util.RoboAsyncTask;
+
+import com.github.mobile.apectj.AccountLoad;
 
 /**
  * Activity to login
@@ -106,6 +105,7 @@ public class LoginActivity extends RoboActionBarAccountAuthenticatorActivity {
      */
     private static final long SYNC_PERIOD = 8L * 60L * 60L;
 
+    @AccountLoad(tag = TAG)
     public static void configureSyncFor(Account account) {
         Log.d(TAG, "Configuring account sync");
 
@@ -113,22 +113,6 @@ public class LoginActivity extends RoboActionBarAccountAuthenticatorActivity {
         ContentResolver.setSyncAutomatically(account, PROVIDER_AUTHORITY, true);
         ContentResolver.addPeriodicSync(account, PROVIDER_AUTHORITY,
                 new Bundle(), SYNC_PERIOD);
-    }
-
-    public static class AccountLoader extends
-            AuthenticatedUserTask<List<User>> {
-
-        @Inject
-        private AccountDataManager cache;
-
-        protected AccountLoader(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected List<User> run(Account account) throws Exception {
-            return cache.getOrgs(true);
-        }
     }
 
     private AccountManager accountManager;
@@ -329,11 +313,6 @@ public class LoginActivity extends RoboActionBarAccountAuthenticatorActivity {
                     accountManager
                             .addAccountExplicitly(account, password, null);
                     configureSyncFor(account);
-                    try {
-                        new AccountLoader(LoginActivity.this).call();
-                    } catch (IOException e) {
-                        Log.d(TAG, "Exception loading organizations", e);
-                    }
                 } else
                     accountManager.setPassword(account, password);
 
