@@ -20,6 +20,7 @@ import android.accounts.Account;
 import android.util.Log;
 
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.ui.DialogFragmentActivity;
 import com.github.mobile.ui.ProgressDialogTask;
 import com.github.mobile.util.ToastUtils;
@@ -91,12 +92,10 @@ public class LabelsDialog {
                 show(selectedLabels);
             }
 
+            @ShowError(logMsg="Exception loading labels")
             @Override
             protected void onException(Exception e) throws RuntimeException {
                 super.onException(e);
-
-                Log.d(TAG, "Exception loading labels", e);
-                ToastUtils.show(activity, e, R.string.error_labels_load);
             }
 
             @Override

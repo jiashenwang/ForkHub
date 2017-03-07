@@ -29,6 +29,8 @@ import org.eclipse.egit.github.core.CommitComment;
 import org.eclipse.egit.github.core.IRepositoryIdProvider;
 import org.eclipse.egit.github.core.service.CommitService;
 
+import com.github.mobile.apectj.ShowError;
+
 /**
  * Task to comment on a commit
  */
@@ -83,12 +85,9 @@ public class CreateCommentTask extends ProgressDialogTask<CommitComment> {
 
     }
 
+    @ShowError(logMsg="Exception creating comment on commit")
     @Override
     protected void onException(final Exception e) throws RuntimeException {
         super.onException(e);
-
-        Log.d(TAG, "Exception creating comment on commit", e);
-
-        ToastUtils.show((Activity) getContext(), e.getMessage());
     }
 }

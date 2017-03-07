@@ -226,12 +226,6 @@ public class TwoFactorAuthActivity extends RoboActionBarActivity {
                 accountManager.setAuthToken(account, ACCOUNT_TYPE, authToken);
 
                 configureSyncFor(account);
-                try {
-                    new LoginActivity.AccountLoader(TwoFactorAuthActivity.this).call();
-                } catch (IOException e) {
-                    Log.d(TAG, "Exception loading organizations", e);
-                }
-
                 return user;
             }
 

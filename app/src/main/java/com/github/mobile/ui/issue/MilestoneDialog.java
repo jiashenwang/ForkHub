@@ -22,6 +22,7 @@ import android.accounts.Account;
 import android.util.Log;
 
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.ui.DialogFragmentActivity;
 import com.github.mobile.ui.ProgressDialogTask;
 import com.github.mobile.util.ToastUtils;
@@ -106,12 +107,10 @@ public class MilestoneDialog {
                 show(selectedMilestone);
             }
 
+            @ShowError(logMsg="Exception loading milestones")
             @Override
             protected void onException(Exception e) throws RuntimeException {
                 super.onException(e);
-
-                Log.d(TAG, "Exception loading milestones", e);
-                ToastUtils.show(activity, e, R.string.error_milestones_load);
             }
 
             @Override

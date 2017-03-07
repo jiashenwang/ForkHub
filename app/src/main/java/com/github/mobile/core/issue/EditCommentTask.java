@@ -21,6 +21,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.ui.ProgressDialogTask;
 import com.github.mobile.util.HtmlUtils;
 import com.github.mobile.util.ToastUtils;
@@ -81,12 +82,9 @@ public class EditCommentTask extends ProgressDialogTask<Comment> {
         return this;
     }
 
+    @ShowError(logMsg="Exception editing comment on issue")
     @Override
     protected void onException(Exception e) throws RuntimeException {
         super.onException(e);
-
-        Log.d(TAG, "Exception editing comment on issue", e);
-
-        ToastUtils.show((Activity) getContext(), e.getMessage());
     }
 }

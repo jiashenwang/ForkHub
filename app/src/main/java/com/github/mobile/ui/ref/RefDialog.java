@@ -19,6 +19,7 @@ import android.accounts.Account;
 import android.util.Log;
 
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.core.ref.RefUtils;
 import com.github.mobile.ui.DialogFragmentActivity;
 import com.github.mobile.ui.ProgressDialogTask;
@@ -88,12 +89,10 @@ public class RefDialog {
                 show(selectedRef);
             }
 
+            @ShowError(logMsg="Exception loading references")
             @Override
             protected void onException(Exception e) throws RuntimeException {
                 super.onException(e);
-
-                Log.d(TAG, "Exception loading references", e);
-                ToastUtils.show(activity, e, R.string.error_refs_load);
             }
 
             @Override

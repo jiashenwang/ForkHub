@@ -36,6 +36,7 @@ import android.widget.ProgressBar;
 import com.github.kevinsawicki.wishlist.ViewUtils;
 import com.github.mobile.Intents.Builder;
 import com.github.mobile.R;
+import com.github.mobile.apectj.ShowError;
 import com.github.mobile.core.code.RefreshBlobTask;
 import com.github.mobile.core.commit.CommitUtils;
 import com.github.mobile.ui.BaseActivity;
@@ -284,16 +285,12 @@ public class CommitFileViewActivity extends BaseActivity implements
                 }
             }
 
+            @ShowError(logMsg="Loading commit file contents failed")
             @Override
             protected void onException(Exception e) throws RuntimeException {
                 super.onException(e);
-
-                Log.d(TAG, "Loading commit file contents failed", e);
-
                 ViewUtils.setGone(loadingBar, true);
                 ViewUtils.setGone(codeView, false);
-                ToastUtils.show(CommitFileViewActivity.this, e,
-                        R.string.error_file_load);
             }
         }.execute();
     }
